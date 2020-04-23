@@ -1,0 +1,15 @@
+import onnx
+
+# Load the ONNX model
+model = onnx.load("yolo-obj-608-water_15000.onnx")
+
+# Check that the IR is well formed
+onnx.checker.check_model(model)
+
+# Print a human readable representation of the graph
+onnx.helper.printable_graph(model.graph)
+
+import caffe2.python.onnx.backend as backend
+import numpy as np
+
+rep = backend.prepare(model, device="CUDA:0")outputs = rep.run(np.random.randn(10, 3, 224, 224).astype(np.float32))
